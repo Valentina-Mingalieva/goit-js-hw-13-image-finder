@@ -1,35 +1,44 @@
+'use strict';
+
 import './sass/main.scss';
+import cardTpl from './templates/image-card.hbs';
 
-
-/* var API_KEY = '22449475-57a9053ebf376971bfd59fb95';
-var URL = "https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=что_искать&page=1&per_page=12&key=твой_ключ"+API_KEY;
-$.getJSON(URL, function(data){
-if (parseInt(data.totalHits) > 0)
-    $.each(data.hits, function(i, hit){ console.log(hit.pageURL); });
-else
-    console.log('No hits');
-}); */
+import ApiService from './js/apiService.js';
 
 const galleryEl = document.querySelector('.js-gallery');
-const loadMoreEl = document.querySelector('.load-btn');
-const searchEl = document.querySelector('#search-form');
+const searchBtn = document.querySelector('.search-btn');
+const searchForm = document.querySelector('.search-form');
+const input = document.querySelector('input');
+const loadMoreBtn = document.querySelector('.load-btn');
 
+const apiService = new ApiService();
 
+function onSearch(e) {
+    e.preventDefault();
 
-function picsFounder() {
     /* galleryEl.innerHTML = ''; */
+
+    const form = e.currentTarget;
     
-    const data = searchEl.textContent;
-    return fetch(`https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${data}&page=1&per_page=12&key=22449475-57a9053ebf376971bfd59fb95`)
-        .then(response => {
-            if (response.ok) {
-                /* return response.json(); */
-                console.log(response);
-            }
-            throw new Error(response.statusText);
-        })
+    const searchQuery = form.elements.query.value;
+    fetchPics(searchQuery)
+        .then(renderImage)
+        .catch(error)
+        .finally()
 }
     
-picsFounder();
-searchEl.addEventListener('input', picsFounder())
-// loadMoreEl.addEventListener('click', loadMorePics());
+function renderImage(pic) {
+    galleryEl.insertAdjacentHTML('beforeend', cardTpl(pic));
+}
+
+searchForm.addEventListener('submit', onSearch);
+
+/* function loadMorePics() {
+    galleryEl.innerHTML = '';
+    fetchPics(input.value)
+        .then(renderImage)
+        .catch(error)
+        .finally()
+}
+
+loadMoreBtn.addEventListener('click', loadMorePics); */
