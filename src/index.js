@@ -2,43 +2,53 @@
 
 import './sass/main.scss';
 import cardTpl from './templates/image-card.hbs';
-
 import ApiService from './js/apiService.js';
+import getRefs from './js/get-refs';
 
-const galleryEl = document.querySelector('.js-gallery');
-const searchBtn = document.querySelector('.search-btn');
-const searchForm = document.querySelector('.search-form');
-const input = document.querySelector('input');
-const loadMoreBtn = document.querySelector('.load-btn');
-
+const refs = getRefs();
 const apiService = new ApiService();
 
 function onSearch(e) {
     e.preventDefault();
 
-    /* galleryEl.innerHTML = ''; */
+    apiService.query = e.target.value;
 
-    const form = e.currentTarget;
-    
-    const searchQuery = form.elements.query.value;
-    fetchPics(searchQuery)
-        .then(renderImage)
-        .catch(error)
-        .finally()
+    if (apiService.query === '') {
+        refs.loadMoreBtn.classList.add('visually-hidden');
+        refs.galleryEl.innerHTML = '';
+    } else {
+        /* refs.galleryEl.innerHTML = ''; */
+        apiService.resetPage();
+        apiService.fetchPics()
+            .then(renderPic)
+            .catch(onFetchError)
+            .finally()
+        refs.loadMoreBtn.classList.remove('visually-hidden');
+    }
 }
     
-function renderImage(pic) {
-    galleryEl.insertAdjacentHTML('beforeend', cardTpl(pic));
+function renderPic(pics) {
+    refs.galleryEl.insertAdjacentHTML('beforeend', cardTpl(pics));
 }
 
-searchForm.addEventListener('submit', onSearch);
+function onFetchError(error) {
+    alert('Pictures are not found');
+}
+
+/* const element = document.getElementById('.my-element-selector');
+element.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+}); */
 
 /* function loadMorePics() {
+    
     galleryEl.innerHTML = '';
     fetchPics(input.value)
-        .then(renderImage)
-        .catch(error)
-        .finally()
-}
+    .then(renderImage)
+    .catch(error)
+    .finally()
+} */
 
-loadMoreBtn.addEventListener('click', loadMorePics); */
+refs.searchForm.addEventListener('submit', onSearch);
+// refs.loadMoreBtn.addEventListener('click', loadMorePics);
