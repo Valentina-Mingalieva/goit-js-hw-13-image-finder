@@ -35,20 +35,15 @@ function onFetchError(error) {
     alert('Pictures are not found');
 }
 
-/* const element = document.getElementById('.my-element-selector');
-element.scrollIntoView({
-    behavior: 'smooth',
-    block: 'end',
-}); */
+function loadMorePics () {
+    renderPic();
 
-/* function loadMorePics() {
-    
-    galleryEl.innerHTML = '';
-    fetchPics(input.value)
-    .then(renderImage)
-    .catch(error)
-    .finally()
-} */
+    refs.galleryEl.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+    });
+}
+
 
 refs.searchForm.addEventListener('submit', onSearch);
-// refs.loadMoreBtn.addEventListener('click', loadMorePics);
+refs.loadMoreBtn.addEventListener('click', loadMorePics);
