@@ -2,48 +2,56 @@
 
 import './sass/main.scss';
 import cardTpl from './templates/image-card.hbs';
-import ApiService from './js/apiService.js';
-import getRefs from './js/get-refs';
 
+import ApiService from './js/apiService.js';
+const api = new ApiService();
+
+import getRefs from './js/get-refs';
 const refs = getRefs();
-const apiService = new ApiService();
 
 function onSearch(e) {
     e.preventDefault();
 
-    apiService.query = e.target.value;
-
-    if (apiService.query === '') {
+    api.query = e.currentTarget.elements.query.value;
+    if (api.query === '') {
+        alert('Try once again');
+        clearList();
         refs.loadMoreBtn.classList.add('visually-hidden');
-        refs.galleryEl.innerHTML = '';
     } else {
-        /* refs.galleryEl.innerHTML = ''; */
-        apiService.resetPage();
-        apiService.fetchPics()
-            .then(renderPic)
-            .catch(onFetchError)
-            .finally()
+        clearList();
+        api.resetPage();
+        createList();
         refs.loadMoreBtn.classList.remove('visually-hidden');
     }
 }
+
+function createList() {
+    api.fetchUrl()
+    .then(hits => {
+        api.nextPage();
+        renderImageCard(hits);
+    })
+}
     
-function renderPic(pics) {
-    refs.galleryEl.insertAdjacentHTML('beforeend', cardTpl(pics));
+function renderImageCard(hits) {
+    refs.galleryEl.insertAdjacentHTML('afterbegin', cardTpl(hits));
+};
+
+function clearList() {
+    refs.galleryEl.innerHTML = '';
 }
 
-function onFetchError(error) {
-    alert('Pictures are not found');
+function onLoadMore() {
+    createList();
+    onScroll();
 }
 
-function loadMorePics () {
-    renderPic();
-
+function onScroll() {
     refs.galleryEl.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
-    });
+    });   
 }
 
-
 refs.searchForm.addEventListener('submit', onSearch);
-refs.loadMoreBtn.addEventListener('click', loadMorePics);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
