@@ -34,7 +34,7 @@ function createList() {
 }
     
 function renderImageCard(hits) {
-    refs.galleryEl.insertAdjacentHTML('afterbegin', cardTpl(hits));
+    refs.galleryEl.insertAdjacentHTML('beforeend', cardTpl(hits));
 };
 
 function clearList() {
