@@ -9,7 +9,12 @@ export default class ApiService {
     
     fetchUrl() {
         return fetch(`${BASE}?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`)
-            .then(response => response.json())
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })                
             .then(data => {
                 this.nextPage();
                 return data.hits;

@@ -13,7 +13,7 @@ function onSearch(e) {
     e.preventDefault();
 
     api.query = e.currentTarget.elements.query.value;
-    if (api.query === '') {
+    if (refs.galleryEl.children.length === 0) {
         alert('Try once again');
         clearList();
         refs.loadMoreBtn.classList.add('visually-hidden');
