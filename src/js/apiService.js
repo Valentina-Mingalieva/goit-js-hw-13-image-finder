@@ -1,3 +1,6 @@
+import getRefs from './get-refs';
+const refs = getRefs();
+
 const BASE = 'https://pixabay.com/api/';
 const API_KEY = '22449475-57a9053ebf376971bfd59fb95';
 
@@ -13,11 +16,14 @@ export default class ApiService {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(response.statusText);
             })                
             .then(data => {
-                this.nextPage();
-                return data.hits;
+                if (data.total === 0) {
+                    alert('Images not found, check your query')
+                    refs.loadMoreBtn.classList.add('visually-hidden')
+                } else {
+                    return data.hits;
+                };
             });
     };
 

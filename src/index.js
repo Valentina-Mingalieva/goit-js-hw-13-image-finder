@@ -13,7 +13,8 @@ function onSearch(e) {
     e.preventDefault();
 
     api.query = e.currentTarget.elements.query.value;
-    if (refs.galleryEl.children.length === 0) {
+
+    if (api.query === '') {
         alert('Try once again');
         clearList();
         refs.loadMoreBtn.classList.add('visually-hidden');
@@ -29,12 +30,13 @@ function createList() {
     api.fetchUrl()
     .then(hits => {
         api.nextPage();
-        renderImageCard(hits);
+        renderImageCard(hits)
     })
 }
     
 function renderImageCard(hits) {
     refs.galleryEl.insertAdjacentHTML('beforeend', cardTpl(hits));
+    onScroll();
 };
 
 function clearList() {
